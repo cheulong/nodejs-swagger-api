@@ -3,8 +3,9 @@ const cors = require('cors');
 const morgan = require('morgan');
 const low = require('lowdb');
 const swaggerUI = require('swagger-ui-express');
-const swaggerJsDoc = require('swagger-jsdoc');
+const YAML = require('yamljs');
 const booksRouter = require('./routes/books');
+const swaggerJsDoc = YAML.load('./api.yaml');
 
 const PORT = process.env.PORT || 8080;
 
@@ -15,28 +16,9 @@ const db = low(adapter);
 
 db.defaults({ books: [] }).write();
 
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Library API',
-      version: '1.0.0',
-      description: 'A simple Express Library API',
-    },
-    servers: [
-      {
-        url: 'https://5s5s7.sse.codesandbox.io/',
-      },
-    ],
-  },
-  apis: ['./routes/*.js'],
-};
-
-const specs = swaggerJsDoc(options);
-
 const app = express();
 
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerJsDoc));
 
 app.db = db;
 
