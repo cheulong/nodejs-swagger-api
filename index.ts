@@ -2,9 +2,10 @@ import express, { Application, Request, Response } from 'express';
 import * as swaggerJsDoc from './api.json';
 import cors from 'cors';
 import morgan from 'morgan';
-import { Low, JSONFile } from 'lowdb';
-const swaggerUI = require('swagger-ui-express');
-const booksRouter = require('./routes/books');
+import low from 'lowdb';
+import swaggerUI from 'swagger-ui-express';
+import booksRouter from './routes/books';
+import FileSync from 'lowdb/adapters/FileSync';
 
 const PORT = process.env.PORT || 8080;
 
@@ -15,9 +16,9 @@ type Data = {
     author: string;
   }[];
 };
-const adapter = new JSONFile<Data>('db.json');
-const db = new Low<Data>(adapter);
-db.data ||= { books: [] };
+const adapter = new FileSync<Data>('db.json');
+const db = low(adapter);
+db.defaults({ books: [] }).write();
 
 const app: Application = express();
 

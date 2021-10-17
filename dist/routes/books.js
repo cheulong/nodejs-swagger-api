@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const nanoid_1 = require("nanoid");
 const router = express_1.default.Router();
-const { nanoid } = require('nanoid');
 const idLength = 8;
 router.get('/', (req, res) => {
     const books = req.app.get('books');
@@ -20,7 +20,7 @@ router.get('/:id', (req, res) => {
 });
 router.post('/', (req, res) => {
     try {
-        const book = Object.assign({ id: nanoid(idLength) }, req.body);
+        const book = Object.assign({ id: (0, nanoid_1.nanoid)(idLength) }, req.body);
         req.app.get('books').push(book).write();
         res.send(book);
     }
@@ -41,4 +41,4 @@ router.delete('/:id', (req, res) => {
     req.app.get('books').remove({ id: req.params.id }).write();
     res.sendStatus(200);
 });
-module.exports = router;
+exports.default = router;
