@@ -1,4 +1,9 @@
-const express = require('express');
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
 const cors = require('cors');
 const morgan = require('morgan');
 const low = require('lowdb');
@@ -6,26 +11,16 @@ const swaggerUI = require('swagger-ui-express');
 const YAML = require('yamljs');
 const booksRouter = require('./routes/books');
 const swaggerJsDoc = YAML.load('./api.yaml');
-
 const PORT = process.env.PORT || 8080;
-
 const FileSync = require('lowdb/adapters/FileSync');
-
 const adapter = new FileSync('db.json');
 const db = low(adapter);
-
 db.defaults({ books: [] }).write();
-
-const app = express();
-
+const app = (0, express_1.default)();
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerJsDoc));
-
-app.db = db;
-
+app.set('books', db);
 app.use(cors());
-app.use(express.json());
+app.use(express_1.default.json());
 app.use(morgan('dev'));
-
 app.use('/books', booksRouter);
-
 app.listen(PORT, () => console.log(`The server is running on port ${PORT}`));
